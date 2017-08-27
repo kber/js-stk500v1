@@ -176,7 +176,9 @@ function upload(stream, hex, pageSize, timeout, done) {
 
   // program individual pages
   async.whilst(
-    function() { return pageaddr < hex.length; },
+    function() {
+      return pageaddr < hex.length;
+    },
     function(pagedone) {
       console.log("program page");
       async.series([
@@ -239,7 +241,9 @@ function verify(stream, hex, pageSize, timeout, done) {
 
   // verify individual pages
   async.whilst(
-    function() { return pageaddr < hex.length; },
+    function() {
+      return pageaddr < hex.length;
+    },
     function(pagedone) {
       console.log("verify page");
       async.series([
