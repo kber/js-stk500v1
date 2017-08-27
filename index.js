@@ -5,9 +5,9 @@ var Statics = require('./lib/statics');
 var sendCommand = require('./lib/sendCommand');
 
 function sync(stream, attempts, timeout, done) {
-	console.log("sync");
-	var self = this;
-	var tries = 1;
+  console.log("sync");
+  var self = this;
+  var tries = 1;
 
   var opt = {
     cmd: [
@@ -16,16 +16,17 @@ function sync(stream, attempts, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  function attempt () {
-		tries=tries+1;
-    sendCommand(stream, opt, function (err, data) {
-			if (err && tries <= attempts) {
+
+  function attempt() {
+    tries = tries + 1;
+    sendCommand(stream, opt, function(err, data) {
+      if (err && tries <= attempts) {
         if (err) {
           console.log(err);
-          console.error(err.stack);
+          // console.error(err.stack);
         }
-				console.log("failed attempt again", tries);
-				return attempt();
+        console.log("failed attempt again", tries);
+        return attempt();
       }
       console.log('sync complete', err, data, tries);
       done(err, data);
@@ -35,9 +36,9 @@ function sync(stream, attempts, timeout, done) {
 };
 
 function verifySignature(stream, signature, timeout, done) {
-	console.log("verify signature");
-	var self = this;
-	match = Buffer.concat([
+  console.log("verify signature");
+  var self = this;
+  match = Buffer.concat([
     new Buffer([Statics.Resp_STK_INSYNC]),
     signature,
     new Buffer([Statics.Resp_STK_OK])
@@ -50,14 +51,11 @@ function verifySignature(stream, signature, timeout, done) {
     responseLength: match.length,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log('confirm signature', err, data, data.toString('hex'));
-    done(err, data);
-  });
+  sendCommand(stream, opt, done);
 };
 
 function getSignature(stream, timeout, done) {
-	console.log("get signature");
+  console.log("get signature");
   var opt = {
     cmd: [
       Statics.Cmnd_STK_READ_SIGN
@@ -65,16 +63,16 @@ function getSignature(stream, timeout, done) {
     responseLength: 5,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
+  sendCommand(stream, opt, function(err, data) {
     console.log('getSignature', err, data);
     done(err, data);
   });
 };
 
-function setOptions (stream, options, timeout, done) {
-	console.log("set device");
-	var self = this;
-	
+function setOptions(stream, options, timeout, done) {
+  console.log("set device");
+  var self = this;
+
   var opt = {
     cmd: [
       Statics.Cmnd_STK_SET_DEVICE,
@@ -102,7 +100,7 @@ function setOptions (stream, options, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
+  sendCommand(stream, opt, function(err, data) {
     console.log('setOptions', err, data);
     if (err) {
       return done(err);
@@ -112,7 +110,7 @@ function setOptions (stream, options, timeout, done) {
 };
 
 function enterProgrammingMode(stream, timeout, done) {
-	console.log("send enter programming mode");
+  console.log("send enter programming mode");
   var opt = {
     cmd: [
       Statics.Cmnd_STK_ENTER_PROGMODE
@@ -120,16 +118,16 @@ function enterProgrammingMode(stream, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log("sent enter programming mode", err, data);
+  sendCommand(stream, opt, function(err, data) {
+    console.log("sent enter programming mode", err, data);
     done(err, data);
   });
 };
 
 function loadAddress(stream, useaddr, timeout, done) {
-	console.log("load address");
-	var addr_low = useaddr & 0xff;
-	var addr_high = (useaddr >> 8) & 0xff;
+  console.log("load address");
+  var addr_low = useaddr & 0xff;
+  var addr_high = (useaddr >> 8) & 0xff;
   var opt = {
     cmd: [
       Statics.Cmnd_STK_LOAD_ADDRESS,
@@ -139,18 +137,18 @@ function loadAddress(stream, useaddr, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log('loaded address', err, data);
+  sendCommand(stream, opt, function(err, data) {
+    console.log('loaded address', err, data);
     done(err, data);
   });
 };
 
 function loadPage(stream, writeBytes, timeout, done) {
-	console.log("load page");
-	var bytes_low = writeBytes.length & 0xff;
-	var bytes_high = writeBytes.length >> 8;
+  console.log("load page");
+  var bytes_low = writeBytes.length & 0xff;
+  var bytes_high = writeBytes.length >> 8;
 
-	var cmd = Buffer.concat([
+  var cmd = Buffer.concat([
     new Buffer([Statics.Cmnd_STK_PROG_PAGE, bytes_high, bytes_low, 0x46]),
     writeBytes,
     new Buffer([Statics.Sync_CRC_EOP])
@@ -161,62 +159,62 @@ function loadPage(stream, writeBytes, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log('loaded page', err, data);
+  sendCommand(stream, opt, function(err, data) {
+    console.log('loaded page', err, data);
     done(err, data);
   });
 };
 
 function upload(stream, hex, pageSize, timeout, done) {
-	console.log("program");
+  console.log("program");
 
-	var pageaddr = 0;
-	var writeBytes;
-	var useaddr;
+  var pageaddr = 0;
+  var writeBytes;
+  var useaddr;
 
-	var self = this;
+  var self = this;
 
-	// program individual pages
+  // program individual pages
   async.whilst(
     function() { return pageaddr < hex.length; },
     function(pagedone) {
-			console.log("program page");
+      console.log("program page");
       async.series([
-      	function(cbdone){
-      		useaddr = pageaddr >> 1;
-      		cbdone();
-      	},
-      	function(cbdone){
-      		self.loadAddress(stream, useaddr, timeout, cbdone);
-      	},
-        function(cbdone){
+          function(cbdone) {
+            useaddr = pageaddr >> 1;
+            cbdone();
+          },
+          function(cbdone) {
+            self.loadAddress(stream, useaddr, timeout, cbdone);
+          },
+          function(cbdone) {
 
-					writeBytes = hex.slice(pageaddr, (hex.length > pageSize ? (pageaddr + pageSize) : hex.length - 1))
-        	cbdone();
-        },
-        function(cbdone){
-        	self.loadPage(stream, writeBytes, timeout, cbdone);
-        },
-        function(cbdone){
-					console.log("programmed page");
-        	pageaddr =  pageaddr + writeBytes.length;
-        	setTimeout(cbdone, 4);
-        }
-      ],
-      function(error) {
-      	console.log("page done");
-      	pagedone(error);
-      });
+            writeBytes = hex.slice(pageaddr, (hex.length > pageSize ? (pageaddr + pageSize) : hex.length - 1))
+            cbdone();
+          },
+          function(cbdone) {
+            self.loadPage(stream, writeBytes, timeout, cbdone);
+          },
+          function(cbdone) {
+            console.log("programmed page");
+            pageaddr = pageaddr + writeBytes.length;
+            setTimeout(cbdone, 4);
+          }
+        ],
+        function(error) {
+          console.log("page done");
+          pagedone(error);
+        });
     },
     function(error) {
-    	console.log("upload done");
-    	done(error);
+      console.log("upload done");
+      done(error);
     }
   );
 };
 
 function exitProgrammingMode(stream, timeout, done) {
-	console.log("send leave programming mode");
+  console.log("send leave programming mode");
   var opt = {
     cmd: [
       Statics.Cmnd_STK_LEAVE_PROGMODE
@@ -224,91 +222,88 @@ function exitProgrammingMode(stream, timeout, done) {
     responseData: Statics.OK_RESPONSE,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log('sent leave programming mode', err, data);
+  sendCommand(stream, opt, function(err, data) {
+    console.log('sent leave programming mode', err, data);
     done(err, data);
   });
 };
 
 function verify(stream, hex, pageSize, timeout, done) {
-	console.log("verify");
+  console.log("verify");
 
-	var pageaddr = 0;
-	var writeBytes;
-	var useaddr;
+  var pageaddr = 0;
+  var writeBytes;
+  var useaddr;
 
-	var self = this;
+  var self = this;
 
-	// verify individual pages
+  // verify individual pages
   async.whilst(
     function() { return pageaddr < hex.length; },
     function(pagedone) {
-			console.log("verify page");
+      console.log("verify page");
       async.series([
-      	function(cbdone){
-      		useaddr = pageaddr >> 1;
-      		cbdone();
-      	},
-      	function(cbdone){
-      		self.loadAddress(stream, useaddr, timeout, cbdone);
-      	},
-        function(cbdone){
+          function(cbdone) {
+            useaddr = pageaddr >> 1;
+            cbdone();
+          },
+          function(cbdone) {
+            self.loadAddress(stream, useaddr, timeout, cbdone);
+          },
+          function(cbdone) {
 
-					writeBytes = hex.slice(pageaddr, (hex.length > pageSize ? (pageaddr + pageSize) : hex.length - 1))
-        	cbdone();
-        },
-        function(cbdone){
-        	self.verifyPage(stream, writeBytes, pageSize, timeout, cbdone);
-        },
-        function(cbdone){
-					console.log("verified page");
-        	pageaddr =  pageaddr + writeBytes.length;
-        	setTimeout(cbdone, 4);
-        }
-      ],
-      function(error) {
-      	console.log("verify done");
-      	pagedone(error);
-      });
+            writeBytes = hex.slice(pageaddr, (hex.length > pageSize ? (pageaddr + pageSize) : hex.length - 1))
+            cbdone();
+          },
+          function(cbdone) {
+            self.verifyPage(stream, writeBytes, pageSize, timeout, cbdone);
+          },
+          function(cbdone) {
+            console.log("verified page");
+            pageaddr = pageaddr + writeBytes.length;
+            setTimeout(cbdone, 4);
+          }
+        ],
+        function(error) {
+          console.log("verify done");
+          pagedone(error);
+        });
     },
     function(error) {
-    	console.log("verify done");
-    	done(error);
+      console.log("verify done");
+      done(error);
     }
   );
 };
 
 function verifyPage(stream, writeBytes, pageSize, timeout, done) {
-	console.log("verify page");
-	var self = this;
-	match = Buffer.concat([
+  console.log("verify page");
+  var self = this;
+  match = Buffer.concat([
     new Buffer([Statics.Resp_STK_INSYNC]),
     writeBytes,
     new Buffer([Statics.Resp_STK_OK])
   ]);
 
-	var size = writeBytes.length >= pageSize ? pageSize : writeBytes.length;
+  var size = writeBytes.length >= pageSize ? pageSize : writeBytes.length;
 
   var opt = {
     cmd: [
       Statics.Cmnd_STK_READ_PAGE,
-      (size>>8) & 0xff,
+      (size >> 8) & 0xff,
       size & 0xff,
       0x46
     ],
     responseLength: match.length,
     timeout: timeout
   };
-  sendCommand(stream, opt, function (err, data) {
-		console.log('confirm page', err, data, data.toString('hex'));
-    done(err, data);
-  });
+  sendCommand(stream, opt, done);
 };
 
-function bootload(stream, hex, opt, done){
+function bootload(stream, hex, opt, done) {
 
   var parameters = {
-    pagesizehigh: (opt.pagesizehigh<<8 & 0xff),
+    pagesizehigh: (opt.pagesizehigh << 8 & 0xff),
     pagesizelow: opt.pagesizelow & 0xff
   }
 
@@ -320,8 +315,8 @@ function bootload(stream, hex, opt, done){
     this.upload.bind(this, stream, hex, opt.pageSize, opt.timeout),
     this.verify.bind(this, stream, hex, opt.pageSize, opt.timeout),
     this.exitProgrammingMode.bind(this, stream, opt.timeout)
-  ], function(error){
-  	return done(error);
+  ], function(error) {
+    return done(error);
   });
 };
 

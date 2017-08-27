@@ -1,32 +1,100 @@
 {
-  "name": "stk500",
-  "version": "1.0.3",
-  "description": "Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter). No more avrdude system calls or using the arduino IDE.",
-  "main": "index.js",
-  "directories": {
-    "example": "examples"
-  },
-  "scripts": {
-    "test": "mocha --include test/*.js test/*.js --reporter spec"
-  },
-  "repository": "https://github.com/jacobrosenthal/js-stk500v1",
-  "keywords": [
-    "arduino",
-    "stk500",
-    "avrdude"
+  "_args": [
+    [
+      {
+        "raw": "stk500@^1.0.3",
+        "scope": null,
+        "escapedName": "stk500",
+        "name": "stk500",
+        "rawSpec": "^1.0.3",
+        "spec": ">=1.0.3 <2.0.0",
+        "type": "range"
+      },
+      "/Users/wangqiu/projects/BTUpload"
+    ]
   ],
-  "author": "Jacob Rosenthal",
-  "license": "MIT",
+  "_cnpm_publish_time": 1419903394572,
+  "_from": "stk500@>=1.0.3 <2.0.0",
+  "_hasShrinkwrap": false,
+  "_id": "stk500@1.0.3",
+  "_inCache": true,
+  "_location": "/stk500",
+  "_npmUser": {
+    "name": "jjrosent",
+    "email": "jakerosenthal@gmail.com"
+  },
+  "_npmVersion": "1.4.28",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "stk500@^1.0.3",
+    "scope": null,
+    "escapedName": "stk500",
+    "name": "stk500",
+    "rawSpec": "^1.0.3",
+    "spec": ">=1.0.3 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npm.taobao.org/stk500/download/stk500-1.0.3.tgz",
+  "_shasum": "f466f1d2b25f7d554cdc59f8c6f197ccf12bf9c3",
+  "_shrinkwrap": null,
+  "_spec": "stk500@^1.0.3",
+  "_where": "/Users/wangqiu/projects/BTUpload",
+  "author": {
+    "name": "Jacob Rosenthal"
+  },
+  "bugs": {
+    "url": "https://github.com/jacobrosenthal/js-stk500v1/issues"
+  },
   "dependencies": {
     "async": "^0.9.0",
     "buffer-equal": "0.0.1",
     "sinon": "^1.12.2"
   },
+  "description": "Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter). No more avrdude system calls or using the arduino IDE.",
   "devDependencies": {
     "event-stream": "^3.1.7",
-    "mocha": "^2.0.1",
-    "should": "^4.4.1",
     "intel-hex": "^0.1.1",
-    "serialport": "^1.4.0"
-  }
+    "mocha": "^2.0.1",
+    "serialport": "^1.4.0",
+    "should": "^4.4.1"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "dist": {
+    "shasum": "f466f1d2b25f7d554cdc59f8c6f197ccf12bf9c3",
+    "size": 51315,
+    "noattachment": false,
+    "tarball": "http://registry.npm.taobao.org/stk500/download/stk500-1.0.3.tgz"
+  },
+  "gitHead": "3fb8c744d41418241fa5b3131f28242496fea33e",
+  "homepage": "https://github.com/jacobrosenthal/js-stk500v1",
+  "keywords": [
+    "arduino",
+    "stk500",
+    "avrdude"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "jjrosent",
+      "email": "jakerosenthal@gmail.com"
+    }
+  ],
+  "name": "stk500",
+  "optionalDependencies": {},
+  "publish_time": 1419903394572,
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacobrosenthal/js-stk500v1.git"
+  },
+  "scripts": {
+    "test": "mocha --include test/*.js test/*.js --reporter spec"
+  },
+  "version": "1.0.3"
 }
